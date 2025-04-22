@@ -1,6 +1,5 @@
 /**
- * @license
- * Copyright IBM Corporation 2024
+ * Copyright IBM Corporation 2025
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +51,7 @@ async function downloadAndExtractZipFile(url: string, filePath: string): Promise
                         resolve();
                     });
                 });
-            }).on('error', err => {
+            }).on('error', (err: any) => {
                 fs.unlink(filePath, () => reject(err)); // Delete the file if there's an error
             });
         })
