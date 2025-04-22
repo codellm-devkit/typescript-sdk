@@ -29,7 +29,7 @@ enum AnalysisLevel {
     SYSTEM_DEPENDENCY_GRAPH = 4
 }
 
-const analysisLevelMap = {
+const analysisLevelMap: Record<string, AnalysisLevel> = {
   "symbol table": AnalysisLevel.SYMBOL_TABLE,
   "call graph": AnalysisLevel.CALL_GRAPH,
   "program dependency graph": AnalysisLevel.PROGRAM_DEPENDENCY_GRAPH,
@@ -64,8 +64,11 @@ export class JavaAnalysis {
     }
 
     private init() {
-        const projectPath = path.resolve(this.projectDir);
-        const extraArgs = ["-i", projectPath, `--analysis-level=${this.analysisLevel}`];
+        if (this.projectDir != null) {
+            const projectPath = path.resolve(this.projectDir);
+            const extraArgs = ["-i", projectPath, `--analysis-level=${this.analysisLevel}`];
+        }
+        const extraArgs = ["-s", this.sourceCode || "", `--analysis-level=${this.analysisLevel}`];
         const command = [...this.getCodeAnalyzerExec(), ...extraArgs];
         log.info("Running command:", command.join(" "));
         try {

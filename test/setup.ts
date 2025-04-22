@@ -24,7 +24,6 @@ import * as os from 'os';
 import * as https from 'https';
 import extract from 'extract-zip';
 import * as rimraf from 'rimraf';
-import * as pkgJson from '../package.json';
 
 /**
  * A quick function to download and extract a zip file from a URL.
