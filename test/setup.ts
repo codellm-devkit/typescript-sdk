@@ -20,10 +20,8 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import * as os from 'os';
 import * as https from 'https';
 import extract from 'extract-zip';
-import * as rimraf from 'rimraf';
 
 /**
  * A quick function to download and extract a zip file from a URL.
