@@ -4,12 +4,13 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "bun build ./src/index.ts --outdir ./dist",
+    "test": "bun test --preload ./test/conftest.ts",
     "clean": "rm -rf dist coverage"
   },
   "files": [
     "dist",
-    "src/analysis/java/jars/codeanalyzer-2.3.2.jar"
+    "src/analysis/java/jars/codeanalyzer-2.3.3.jar"
   ],
   "exports": [
     "./dist/index.js"
