@@ -22,7 +22,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as https from 'https';
 import extract from 'extract-zip';
-import {beforeAll, afterAll, test} from "bun:test";
+import {beforeAll, afterAll } from "bun:test";
 
 /**
  * Download and extract a zip file from a URL, then return the path to the extracted content.
@@ -61,18 +61,18 @@ export let dayTraderApp: string;
 beforeAll(async () => {
     const javaSampleAppsDir = path.join(__dirname, "test-applications", "java");
     const appZipFile = path.join(javaSampleAppsDir, "daytrader8-1.2.zip");
-    if (!fs.existsSync(appZipFile)) {
-        const zipFileUrl = "https://github.com/OpenLiberty/sample.daytrader8/archive/refs/tags/v1.2.zip"
-        dayTraderApp = await downloadZipFile(zipFileUrl, appZipFile);
-    }
+    const zipFileUrl = "https://github.com/OpenLiberty/sample.daytrader8/archive/refs/tags/v1.2.zip"
+    dayTraderApp = await downloadZipFile(zipFileUrl, appZipFile);
     // Extract the zip file if it hasn't been extracted yet
     const extractedDir = path.join(javaSampleAppsDir, "sample.daytrader8-1.2");
     if (!fs.existsSync(dayTraderApp)) {
         await extract(appZipFile, {dir: javaSampleAppsDir});
         /**
-         * The extracted directory name would follow GitHub's repository zip extraction convention. The extracted directory would be named in the format {repo-name}-{tag}.
-         * For the URL: https://github.com/OpenLiberty/sample.daytrader8/archive/refs/tags/v1.2.zip, the repository name is sample.daytrader8 and the tag is v1.2.
-         * So the extracted directory would be sample.daytrader8-1.2 (note that GitHub typically removes the "v" prefix from version tags in the extracted directory name).
+         * I am just hardcoding the extracted directory name for now. The extracted directory name would follow GitHub's
+         * repository zip extraction convention. The extracted directory would be named in the format {repo-name}-{tag}.
+         * For the URL: https://github.com/OpenLiberty/sample.daytrader8/archive/refs/tags/v1.2.zip, the repository name
+         * is sample.daytrader8 and the tag is v1.2. So the extracted directory would be sample.daytrader8-1.2 (note that
+         * GitHub typically removes the "v" prefix from version tags in the extracted directory name).
          */
     } else {
     }

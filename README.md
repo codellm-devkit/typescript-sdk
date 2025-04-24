@@ -26,7 +26,7 @@ bun add @codellm-devkit/typescript-sdk
 
 Add the following to package.json:
 ```json
-"dependencies":{
+"dependencies": {
     "@codellm-devkit/typescript-sdk": "main"
 }
 ```

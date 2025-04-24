@@ -20,11 +20,11 @@ export class CLDK {
         analysisLevel?: string;
     }): JavaAnalysis {
         if (projectPath === null && sourceCode === null) {
-            throw new CLDKInitializationException("Either projectPath or sourceCode must be provided.");
+            throw new Error("Either projectPath or sourceCode must be provided.");
         }
 
         if (projectPath !== null && sourceCode !== null) {
-            throw new CLDKInitializationException("Both projectPath and sourceCode are provided. Please provide only one.");
+            throw new Error("Both projectPath and sourceCode are provided. Please provide only one.");
         }
 
         if (this.language === "java") {

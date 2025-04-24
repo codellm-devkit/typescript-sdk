@@ -82,12 +82,12 @@ export class JavaAnalysis {
             }
 
             if (result.status !== 0) {
-                throw new CodeanalyzerExecutionException(result.stderr || "Codeanalyzer failed.");
+                throw new Error(result.stderr || "Codeanalyzer failed.");
             }
 
             return JApplication.parse(result.stdout);
         } catch (e: any) {
-            throw new CodeanalyzerExecutionException(e.message || String(e));
+            throw new Error(e.message || String(e));
         }
 
     }
