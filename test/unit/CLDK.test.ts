@@ -1,71 +1,67 @@
 import { CLDK } from "../../src";
 import { JavaAnalysis } from "../../src/analysis/java";
 import { test, expect, mock } from "bun:test";
+import { dayTraderApp } from "../conftest";
 
-// Let's first create a mock object for the JavaAnalysis class.
-mock.module(
-    "../../src/analysis/java", () => ({
-        JavaAnalysis: class MockJavaAnalysis {
-            params: any;
-            constructor(params: any) {
-                this.params = params;
-            }
-        }
-    })
-);
-
+/**
+ * These first set of tests are to test the CLDK class
+ */
 test("CLDK initialization with Java language", () => {
-    const cldk = new CLDK("java");
-    expect(cldk.language).toBe("java");
+    expect(CLDK.for("java").language).toBe("java");
 });
 
 test("CLDK must throw and error when the language is not Java", () => {
-    const cldk = new CLDK("python");
-    expect(() => cldk.analysis({
+    expect(() => CLDK.for("python").analysis({
         projectPath: "fake/path",
-        sourceCode: null,
         analysisLevel: "Symbol Table",
     })).toThrowError("Analysis support for python is not implemented yet.");
 });
 
-test("CLDK analysis method with projectPath", () => {
-    const cldk = new CLDK("java");
-    const analysis = cldk.analysis({
-        projectPath: "fake/path",
-        sourceCode: null,
-        analysisLevel: "Symbol Table",
-    });
-    expect(analysis.params.projectDir).toBe("fake/path");
-    expect(analysis.params.sourceCode).toBe(null);
-    expect(analysis.params.analysisLevel).toBe("Symbol Table");
-});
-
-test("CLDK analysis method with sourceCode", () => {
-    const cldk = new CLDK("java");
-    const analysis = cldk.analysis({
-        projectPath: null,
-        sourceCode: "import { someFunction } from 'some-module';",
-        analysisLevel: "Symbol Table",
-    });
-    expect(analysis.params.projectDir).toBe(null);
-    expect(analysis.params.sourceCode).toBe("import { someFunction } from 'some-module';");
-    expect(analysis.params.analysisLevel).toBe("Symbol Table");
-});
-
-test ("CLDK analysis method must throw an error when both projectPath and sourceCode are provided", () => {
-    const cldk = new CLDK("java");
-    expect(() => cldk.analysis({
-        projectPath: "fake/path",
-        sourceCode: "import { someFunction } from 'some-module';",
-        analysisLevel: "Symbol Table",
-    })).toThrowError("Both projectPath and sourceCode are provided. Please provide only one.");
-});
-
 test("CLDK analysis method must throw an error when neither projectPath nor sourceCode is provided", () => {
-    const cldk = new CLDK("java");
-    expect(() => cldk.analysis({
-        projectPath: null,
-        sourceCode: null,
+    expect(() => CLDK.for("java").analysis({
         analysisLevel: "Symbol Table",
     })).toThrowError("Either projectPath or sourceCode must be provided.");
+});
+
+test("CLDK Analysis level must be set to 1 for symbol table", () => {
+    const analysis = CLDK.for("java").analysis({
+        projectPath: "fake/path",
+        sourceCode: null,
+        analysisLevel: "Symbol Table",
+    });
+    expect(analysis.analysisLevel).toBe(1);
+});
+
+test("CLDK Analysis level must be set to 2 for call graph", () => {
+    const analysis = CLDK.for("java").analysis({
+        projectPath: "fake/path",
+        sourceCode: null,
+        analysisLevel: "Call Graph",
+    });
+    expect(analysis.analysisLevel).toBe(2);
+});
+
+test("CLDK Analysis level must be set to 3 for system dependency graph", () => {
+    const analysis = CLDK.for("java").analysis({
+        projectPath: "fake/path",
+        sourceCode: null,
+        analysisLevel: "system dependency graph",
+    });
+    expect(analysis.analysisLevel).toBe(3);
+});
+
+/**
+ * Okay, so now we can test if we can call codeanalyzer with the right arguments
+ */
+test("CLDK must get the correct codeanalyzer execution command", () => {
+   const analysis = CLDK.for("java").analysis({
+        projectPath: "fake/path",
+        sourceCode: null,
+        analysisLevel: "Symbol Table",
+    });
+
+    const codeAnalyzerExec = analysis.getCodeAnalyzerExec();
+    expect(codeAnalyzerExec[0]).toBe("java");
+    expect(codeAnalyzerExec[1]).toBe("-jar");
+    expect(codeAnalyzerExec[2]).toMatch(/codeanalyzer-.*\.jar/);
 });

@@ -25,14 +25,12 @@ import {JApplicationType} from "../../models/java/types";
 enum AnalysisLevel {
     SYMBOL_TABLE = 1,
     CALL_GRAPH = 2,
-    PROGRAM_DEPENDENCY_GRAPH = 3,
-    SYSTEM_DEPENDENCY_GRAPH = 4
+    SYSTEM_DEPENDENCY_GRAPH = 3,
 }
 
 const analysisLevelMap: Record<string, AnalysisLevel> = {
   "symbol table": AnalysisLevel.SYMBOL_TABLE,
   "call graph": AnalysisLevel.CALL_GRAPH,
-  "program dependency graph": AnalysisLevel.PROGRAM_DEPENDENCY_GRAPH,
   "system dependency graph": AnalysisLevel.SYSTEM_DEPENDENCY_GRAPH
 };
 
@@ -42,15 +40,15 @@ export class JavaAnalysis {
     private readonly analysisLevel: AnalysisLevel;
     application?: JApplicationType;
 
-    constructor(options: { projectDir: string |null; sourceCode: string | null; analysisLevel: string }) {
+    constructor(options: { projectDir: string | null; sourceCode: string | null; analysisLevel: string }) {
         this.projectDir = options.projectDir;
         this.sourceCode = options.sourceCode;
-        this.analysisLevel = analysisLevelMap[options.analysisLevel] ?? AnalysisLevel.SYMBOL_TABLE;
-        this.application = this.init();
+        this.analysisLevel = analysisLevelMap[options.analysisLevel.toLowerCase()] ?? AnalysisLevel.SYMBOL_TABLE;
+
     }
 
     private getCodeAnalyzerExec(): string[] {
-        const codeanalyzerJarPath = path.resolve(__dirname, "../../../cldk/analysis/java/codeanalyzer/jar/");
+        const codeanalyzerJarPath = path.resolve(__dirname, "jars");
         const pattern = path.join(codeanalyzerJarPath, "**/codeanalyzer-*.jar").replace(/\\/g, "/");
         const matches = fg.sync(pattern);
         const jarPath = matches[0];
@@ -63,7 +61,7 @@ export class JavaAnalysis {
         return ["java", "-jar", jarPath];
     }
 
-    private init() {
+    private _init_application() {
         if (this.projectDir != null) {
             const projectPath = path.resolve(this.projectDir);
             const extraArgs = ["-i", projectPath, `--analysis-level=${this.analysisLevel}`];
@@ -89,6 +87,12 @@ export class JavaAnalysis {
         } catch (e: any) {
             throw new Error(e.message || String(e));
         }
+    }
 
+    public getApplication(): JApplicationType {
+        if (!this.application) {
+            this.application = this._init_application();
+        }
+        return this.application;
     }
 }

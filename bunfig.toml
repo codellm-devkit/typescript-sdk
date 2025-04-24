@@ -1,2 +1,4 @@
 [test]
 coverage = true
+exclude = ["**/node_modules/**"]
+patterns = ["**/*Test*.ts", "**/*test*.ts"]
