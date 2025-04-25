@@ -61,6 +61,8 @@ jobs:
         run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          registry-url: "https://registry.npmjs.org"
+          always-auth: true
 
       - name: Publish Release on GitHub
         uses: softprops/action-gh-release@v1
