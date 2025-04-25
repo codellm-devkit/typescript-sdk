@@ -1,5 +1,5 @@
 {
-  "name": "@cldk/cldk",
+  "name": "@codellm-devkit/cldk",
   "version": "0.0.0-pre-alpha",
   "description": "",
   "main": "dist/index.js",

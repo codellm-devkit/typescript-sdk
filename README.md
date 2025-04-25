@@ -14,8 +14,8 @@
   <a href="https://codellm-devkit.info">
     <img src="https://img.shields.io/badge/GitHub%20Pages-Docs-blue?style=for-the-badge" />
   </a>
-  <a href="https://www.npmjs.com/package/@cldk/cldk">
-    <img src="https://img.shields.io/npm/v/@cldk/cldk?color=crimson&logo=npm&style=for-the-badge" />
+  <a href="https://www.npmjs.com/package/@codellm-devkit/cldk">
+    <img src="https://img.shields.io/npm/v/@codellm-devkit/cldk?color=crimson&logo=npm&style=for-the-badge" />
   </a>
   <a href="https://discord.com/channels/1333486179667935403/1334150434348208208">
     <img src="https://dcbadge.limes.pink/api/server/https://discord.gg/zEjz9YrmqN?style=for-the-badge"/>
@@ -34,17 +34,17 @@ This is the TypeScript SDK for the Codellm-Devkit (CLDK). The SDK provides a uni
    
 1. Using npm
    ```bash
-   npm i @cldk/cldk
+   npm i @codellm-devkit/cldk
    ```
 
 2. Using yarn
    ```bash
-   yarn add @cldk/cldk
+   yarn add @codellm-devkit/cldk
    ```
 
 3. Using bun 
    ```bash
-   bun add @cldk/cldk
+   bun add @codellm-devkit/cldk
    ```
 
 ### 🚀 Quickstart
@@ -64,10 +64,10 @@ This is the TypeScript SDK for the Codellm-Devkit (CLDK). The SDK provides a uni
 
    This creates a minimal `package.json` instantly.
 
-3. Install `@cldk/cldk`
+3. Install `@codellm-devkit/cldk`
    
    ```bash
-   bun add @cldk/cldk
+   bun add @codellm-devkit/cldk
    ```
 
 4. Create a file `test-analysis.ts` with the following content:
