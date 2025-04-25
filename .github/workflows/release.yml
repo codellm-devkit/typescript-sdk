@@ -1,0 +1,65 @@
+name: Node Bun Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+env:
+  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js with Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: "latest"
+
+      - name: Install Node package dependencies
+        run: bun install
+
+      - name: Inject latest Code Analyzer JAR
+        run: |
+          CODE_ANALYZER_URL=$(curl -s https://api.github.com/repos/codellm-devkit/codeanalyzer-java/releases/latest | jq -r '.assets[] | .browser_download_url')
+          echo "Downloading:" $CODE_ANALYZER_URL
+          wget -q $CODE_ANALYZER_URL
+          echo "Moving codeanalyzer jar to:" ${{ github.workspace }}/src/analysis/java/jars/
+          mv codeanalyzer-*.jar ${{ github.workspace }}/src/analysis/java/jars/
+
+      - name: Build package
+        run: bun run build
+
+      - name: Run Tests
+        id: test
+        continue-on-error: false
+        run: bun run test
+
+      - name: Generate Changelog
+        id: gen_changelog
+        uses: mikepenz/release-changelog-builder-action@v5
+        with:
+          failOnError: "true"
+          configuration: .github/workflows/release_config.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish package to npm via Bun
+        run: bun publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish Release on GitHub
+        uses: softprops/action-gh-release@v1
+        with:
+          body: ${{ steps.gen_changelog.outputs.changelog }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
