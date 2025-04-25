@@ -20,7 +20,7 @@ import fs from "fs";
 import log from "loglevel";
 import {spawn, spawnSync} from "node:child_process";
 import {JApplication} from "../../models/java";
-import {JApplicationType} from "../../models/java/types";
+import {JApplicationType, JCompilationUnitType} from "../../models/java/types";
 import os from "os";
 import JSONStream from "JSONStream";
 
@@ -61,66 +61,94 @@ export class JavaAnalysis {
         return ["java", "-jar", jarPath];
     }
 
+    /**
+     * Initialize the application by running the codeanalyzer and parsing the output.
+     * @private
+     * @returns {Promise<JApplicationType>} A promise that resolves to the parsed application data
+     * @throws {Error} If the project directory is not specified or if codeanalyzer fails
+     */
     private async _initialize_application(): Promise<JApplicationType> {
-    return new Promise<JApplicationType>((resolve, reject) => {
-        if (!this.projectDir) {
-            return reject(new Error("Project directory not specified"));
-        }
+        return new Promise<JApplicationType>((resolve, reject) => {
+            if (!this.projectDir) {
+                return reject(new Error("Project directory not specified"));
+            }
 
-        const projectPath = path.resolve(this.projectDir);
-        /**
-         * I kept running into OOM issues when running the codeanalyzer output is piped to stream.
-         * So I decided to write the output to a temporary file and then read the file.
-         */
-        // Create a temporary file to store the codeanalyzer output
-        const crypto = require('crypto');
-        const tmpFilePath = path.join(os.tmpdir(), `${Date.now()}-${crypto.randomUUID()}`);
-        const command = [...this.getCodeAnalyzerExec(), "-i", projectPath, '-o', tmpFilePath, `--analysis-level=${this.analysisLevel}`, '--verbose'];
-        log.debug(command.join(" "));
+            const projectPath = path.resolve(this.projectDir);
+            /**
+             * I kept running into OOM issues when running the codeanalyzer output is piped to stream.
+             * So I decided to write the output to a temporary file and then read the file.
+             */
+                // Create a temporary file to store the codeanalyzer output
+            const crypto = require('crypto');
+            const tmpFilePath = path.join(os.tmpdir(), `${Date.now()}-${crypto.randomUUID()}`);
+            const command = [...this.getCodeAnalyzerExec(), "-i", projectPath, '-o', tmpFilePath, `--analysis-level=${this.analysisLevel}`, '--verbose'];
+            log.debug(command.join(" "));
 
-        const result = spawnSync(command[0], command.slice(1), {
-            stdio: ["ignore", "pipe", "inherit"],
-        });
-
-        if (result.error) {
-            return reject(result.error);
-        }
-
-        if (result.status !== 0) {
-            return reject(new Error("Codeanalyzer failed to run."));
-        }
-
-        // Read the analysis result from the temporary file
-        try {
-            const stream = fs.createReadStream(path.join(tmpFilePath, 'analysis.json')).pipe(JSONStream.parse());
-            const result = {} as JApplicationType;
-
-            stream.on('data', (data) => {
-                Object.assign(result, JApplication.parse(data));
+            const result = spawnSync(command[0], command.slice(1), {
+                stdio: ["ignore", "pipe", "inherit"],
             });
 
-            stream.on('end', () => {
-                // Clean up the temporary file
-                fs.rm(tmpFilePath, { recursive: true, force: true }, (err) => {
-                    if (err) log.warn(`Failed to delete temporary file: ${tmpFilePath}`, err);
+            if (result.error) {
+                return reject(result.error);
+            }
+
+            if (result.status !== 0) {
+                return reject(new Error("Codeanalyzer failed to run."));
+            }
+
+            // Read the analysis result from the temporary file
+            try {
+                const stream = fs.createReadStream(path.join(tmpFilePath, 'analysis.json')).pipe(JSONStream.parse());
+                const result = {} as JApplicationType;
+
+                stream.on('data', (data) => {
+                    Object.assign(result, JApplication.parse(data));
                 });
-                resolve(result as JApplicationType);
-            });
 
-            stream.on('error', (err) => {
-                reject(err);
-            });
-        } catch (error) {
-            reject(error);
-        }
-    });
-}
+                stream.on('end', () => {
+                    // Clean up the temporary file
+                    fs.rm(tmpFilePath, {recursive: true, force: true}, (err) => {
+                        if (err) log.warn(`Failed to delete temporary file: ${tmpFilePath}`, err);
+                    });
+                    resolve(result as JApplicationType);
+                });
 
+                stream.on('error', (err) => {
+                    reject(err);
+                });
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
+
+    /**
+     * Get the application data. This method returns the parsed Java application as a JSON structure containing the
+     * following information:
+     * |_ symbol_table: A record of file paths to compilation units. Each compilation unit further contains:
+     *   |_ comments: Top-level file comments
+     *   |_ imports: All import statements
+     *   |_ type_declarations: All class/interface/enum/record declarations with their:
+     *     |_ fields, methods, constructors, initialization blocks, etc.
+     * |_ call_graph: Method-to-method call relationships (if analysis level ≥ 2)
+     * |_ system_dependency_graph: System component dependencies (if analysis level = 3)
+     *
+     * The application view denoted by this application structure is crucial for further fine-grained analysis APIs.
+     * If the application is not already initialized, it will be initialized first.
+     * @returns {Promise<JApplicationType>} A promise that resolves to the application data
+     */
     public async getApplication(): Promise<JApplicationType> {
         if (!this.application) {
             this.application = await this._initialize_application();
         }
         return this.application;
+    }
+
+    public async getSymbolTable(): Promise<Record<string, JCompilationUnitType>> {
+        if (!this.application) {
+            this.application = await this._initialize_application();
+        }
+        return this.application.symbol_table;
     }
 }
 
