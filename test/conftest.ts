@@ -24,32 +24,6 @@ import * as https from 'https';
 import extract from 'extract-zip';
 import {beforeAll, afterAll } from "bun:test";
 
-/**
- * Download and extract a zip file from a URL, then return the path to the extracted content.
- * @returns The full path to the extracted content, including any top-level directory
- */
-async function downloadZipFile(url: string, zipFilePath: string): Promise<string> {
-    return new Promise((resolve, reject) => {
-        // Let's first create a directory to store the zip file if it doesn't exist
-        const dirName = path.dirname(zipFilePath);
-        if (!fs.existsSync(dirName)) {
-            fs.mkdirSync(dirName, {recursive: true});
-        }
-
-        const file = fs.createWriteStream(zipFilePath);
-        https.get(url, res => {
-            res.pipe(file);
-            file.on('finish', () => {
-                file.close(() => {
-                    resolve(zipFilePath);
-                });
-            });
-            res.on('error', (err) => {
-                fs.unlink(zipFilePath, () => reject(err)); // Delete the file if there's an error
-            });
-        });
-    });
-}
 
 /*
  * Set up sample applications for testing
@@ -60,33 +34,27 @@ export let dayTraderApp: string;
 
 beforeAll(async () => {
     const javaSampleAppsDir = path.join(__dirname, "test-applications", "java");
-    const appZipFile = path.join(javaSampleAppsDir, "daytrader8-1.2.zip");
-    const zipFileUrl = "https://github.com/OpenLiberty/sample.daytrader8/archive/refs/tags/v1.2.zip"
-    dayTraderApp = await downloadZipFile(zipFileUrl, appZipFile);
-    // Extract the zip file if it hasn't been extracted yet
+    const appZipFile = path.join(javaSampleAppsDir, "sample.daytrader8-1.2.zip");
     const extractedDir = path.join(javaSampleAppsDir, "sample.daytrader8-1.2");
-    if (!fs.existsSync(dayTraderApp)) {
-        await extract(appZipFile, {dir: javaSampleAppsDir});
-        /**
-         * I am just hardcoding the extracted directory name for now. The extracted directory name would follow GitHub's
-         * repository zip extraction convention. The extracted directory would be named in the format {repo-name}-{tag}.
-         * For the URL: https://github.com/OpenLiberty/sample.daytrader8/archive/refs/tags/v1.2.zip, the repository name
-         * is sample.daytrader8 and the tag is v1.2. So the extracted directory would be sample.daytrader8-1.2 (note that
-         * GitHub typically removes the "v" prefix from version tags in the extracted directory name).
-         */
-    } else {
-    }
+    await extract(appZipFile, {dir: javaSampleAppsDir});
+    /**
+     * I am just hardcoding the extracted directory name for now. The extracted directory name would follow GitHub's
+     * repository zip extraction convention. The extracted directory would be named in the format {repo-name}-{tag}.
+     * For the URL: https://github.com/OpenLiberty/sample.daytrader8/archive/refs/tags/v1.2.zip, the repository name
+     * is sample.daytrader8 and the tag is v1.2. So the extracted directory would be sample.daytrader8-1.2 (note that
+     * GitHub typically removes the "v" prefix from version tags in the extracted directory name).
+     */
     // Set the dayTraderApp variable to the extracted directory
     dayTraderApp = extractedDir;
 })
 
-/**
- * Tear down the test environment
- * Remove the daytrader application directory (but keep the zip file)
- */
-afterAll(async () => {
-    if (dayTraderApp) {
-        fs.rmSync(path.dirname(dayTraderApp), {recursive: true, force: true});
-    }
-})
-
+// /**
+//  * Tear down the test environment
+//  * Remove the daytrader application directory (but keep the zip file)
+//  */
+// afterAll(async () => {
+//     if (dayTraderApp) {
+//         fs.rmSync(path.dirname(dayTraderApp), {recursive: true, force: true});
+//     }
+// })
+//

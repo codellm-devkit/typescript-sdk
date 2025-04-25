@@ -1,11 +1,19 @@
 import { CLDK } from "../../../../src/";
 import {dayTraderApp} from "../../../conftest";
+import {expect, test } from "bun:test";
 
 test("Must get analysis object from JavaAnalysis object", () => {
-    const cldk = new CLDK("java");
-    const analysis = cldk.analysis({
+    const analysis = CLDK.for("java").analysis({
         projectPath: dayTraderApp,
-        sourceCode: null,
         analysisLevel: "Symbol Table",
     });
+});
+
+test("Must get JApplication instance", async () => {
+    const analysis = CLDK.for("java").analysis({
+        projectPath: dayTraderApp,
+        analysisLevel: "Symbol Table",
+    });
+    const jApplication = await analysis.getApplication();
+    expect(jApplication).toBeDefined();
 });

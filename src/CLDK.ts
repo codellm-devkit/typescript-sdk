@@ -17,35 +17,18 @@ export class CLDK {
     public static for(language: string): CLDK {
         return new CLDK(language);
     }
-    /**
-     * We have two overloaded constructors for the analysis method.
-     */
-
-    /* Run analysis on a project path */
-    public analysis(options: { projectPath: string; analysisLevel?: string }): JavaAnalysis;
-    /* Run analysis on a project path */
-    public analysis(options: { sourceCode: string; analysisLevel?: string }): JavaAnalysis;
 
     /**
      * Implementation of the analysis method
      */
     Implementation
-    public analysis(options: { projectPath?: string; sourceCode?: string; analysisLevel?: string }): JavaAnalysis {
-        const {projectPath, sourceCode, analysisLevel = "Symbol Table"} = options;
-
-        if (!projectPath && !sourceCode) {
-            throw new Error("Either projectPath or sourceCode must be provided.");
-        }
-
-        const analysisOptions = {
-            projectPath: projectPath ?? null,
-            sourceCode: sourceCode ?? null,
-            analysisLevel,
-        };
-
+    public analysis({ projectPath, analysisLevel}): JavaAnalysis {
         if (this.language === "java") {
             this.makeSureJavaIsInstalled();
-            return new JavaAnalysis(analysisOptions);
+            return new JavaAnalysis({
+                projectDir: projectPath,
+                analysisLevel: analysisLevel,
+            });
         } else {
             throw new Error(`Analysis support for ${this.language} is not implemented yet.`);
         }

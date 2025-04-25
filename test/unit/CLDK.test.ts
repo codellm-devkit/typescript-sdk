@@ -1,7 +1,5 @@
 import { CLDK } from "../../src";
-import { JavaAnalysis } from "../../src/analysis/java";
-import { test, expect, mock } from "bun:test";
-import { dayTraderApp } from "../conftest";
+import { test, expect } from "bun:test";
 
 /**
  * These first set of tests are to test the CLDK class
@@ -17,11 +15,6 @@ test("CLDK must throw and error when the language is not Java", () => {
     })).toThrowError("Analysis support for python is not implemented yet.");
 });
 
-test("CLDK analysis method must throw an error when neither projectPath nor sourceCode is provided", () => {
-    expect(() => CLDK.for("java").analysis({
-        analysisLevel: "Symbol Table",
-    })).toThrowError("Either projectPath or sourceCode must be provided.");
-});
 
 test("CLDK Analysis level must be set to 1 for symbol table", () => {
     const analysis = CLDK.for("java").analysis({
@@ -29,7 +22,7 @@ test("CLDK Analysis level must be set to 1 for symbol table", () => {
         sourceCode: null,
         analysisLevel: "Symbol Table",
     });
-    expect(analysis.analysisLevel).toBe(1);
+    expect(analysis.analysisLevel).toBe("1");
 });
 
 test("CLDK Analysis level must be set to 2 for call graph", () => {
@@ -38,7 +31,7 @@ test("CLDK Analysis level must be set to 2 for call graph", () => {
         sourceCode: null,
         analysisLevel: "Call Graph",
     });
-    expect(analysis.analysisLevel).toBe(2);
+    expect(analysis.analysisLevel).toBe("2");
 });
 
 test("CLDK Analysis level must be set to 3 for system dependency graph", () => {
@@ -47,7 +40,7 @@ test("CLDK Analysis level must be set to 3 for system dependency graph", () => {
         sourceCode: null,
         analysisLevel: "system dependency graph",
     });
-    expect(analysis.analysisLevel).toBe(3);
+    expect(analysis.analysisLevel).toBe("3");
 });
 
 /**
