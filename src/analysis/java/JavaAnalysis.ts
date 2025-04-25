@@ -18,11 +18,12 @@ import path from "path";
 import fg from "fast-glob";
 import fs from "fs";
 import log from "loglevel";
-import {spawn, spawnSync} from "node:child_process";
-import {JApplication} from "../../models/java";
-import {JApplicationType, JCompilationUnitType} from "../../models/java/types";
+import { spawnSync } from "node:child_process";
+import { JApplication } from "../../models/java";
+import * as types from "../../models/java/types";
 import os from "os";
 import JSONStream from "JSONStream";
+import crypto from "crypto";
 
 enum AnalysisLevel {
     SYMBOL_TABLE = "1",
@@ -38,8 +39,8 @@ const analysisLevelMap: Record<string, AnalysisLevel> = {
 
 export class JavaAnalysis {
     private readonly projectDir: string | null;
-    private readonly analysisLevel: AnalysisLevel;
-    application?: JApplicationType;
+    private analysisLevel: AnalysisLevel;
+    application?: types.JApplicationType;
 
     constructor(options: { projectDir: string | null; analysisLevel: string }) {
         this.projectDir = options.projectDir;
@@ -64,26 +65,24 @@ export class JavaAnalysis {
     /**
      * Initialize the application by running the codeanalyzer and parsing the output.
      * @private
-     * @returns {Promise<JApplicationType>} A promise that resolves to the parsed application data
+     * @returns {Promise<types.JApplicationType>} A promise that resolves to the parsed application data
      * @throws {Error} If the project directory is not specified or if codeanalyzer fails
      */
-    private async _initialize_application(): Promise<JApplicationType> {
-        return new Promise<JApplicationType>((resolve, reject) => {
+    private async _initialize_application(): Promise<types.JApplicationType> {
+        return new Promise<types.JApplicationType>((resolve, reject) => {
             if (!this.projectDir) {
                 return reject(new Error("Project directory not specified"));
             }
 
             const projectPath = path.resolve(this.projectDir);
-            /**
-             * I kept running into OOM issues when running the codeanalyzer output is piped to stream.
-             * So I decided to write the output to a temporary file and then read the file.
-             */
-                // Create a temporary file to store the codeanalyzer output
-            const crypto = require('crypto');
+            // Create a temporary file to store the codeanalyzer output
             const tmpFilePath = path.join(os.tmpdir(), `${Date.now()}-${crypto.randomUUID()}`);
             const command = [...this.getCodeAnalyzerExec(), "-i", projectPath, '-o', tmpFilePath, `--analysis-level=${this.analysisLevel}`, '--verbose'];
+            // Check if command is valid
+            if (!command[0]) {
+                return reject(new Error("Codeanalyzer command not found"));
+            }
             log.debug(command.join(" "));
-
             const result = spawnSync(command[0], command.slice(1), {
                 stdio: ["ignore", "pipe", "inherit"],
             });
@@ -99,9 +98,9 @@ export class JavaAnalysis {
             // Read the analysis result from the temporary file
             try {
                 const stream = fs.createReadStream(path.join(tmpFilePath, 'analysis.json')).pipe(JSONStream.parse());
-                const result = {} as JApplicationType;
+                const result = {} as types.JApplicationType;
 
-                stream.on('data', (data) => {
+                stream.on('data', (data: unknown) => {
                     Object.assign(result, JApplication.parse(data));
                 });
 
@@ -110,10 +109,10 @@ export class JavaAnalysis {
                     fs.rm(tmpFilePath, {recursive: true, force: true}, (err) => {
                         if (err) log.warn(`Failed to delete temporary file: ${tmpFilePath}`, err);
                     });
-                    resolve(result as JApplicationType);
+                    resolve(result as types.JApplicationType);
                 });
 
-                stream.on('error', (err) => {
+                stream.on('error', (err: any) => {
                     reject(err);
                 });
             } catch (error) {
@@ -135,17 +134,28 @@ export class JavaAnalysis {
      *
      * The application view denoted by this application structure is crucial for further fine-grained analysis APIs.
      * If the application is not already initialized, it will be initialized first.
-     * @returns {Promise<JApplicationType>} A promise that resolves to the application data
+     * @returns {Promise<types.JApplicationType>} A promise that resolves to the application data
      */
-    public async getApplication(): Promise<JApplicationType> {
+    public async getApplication(): Promise<types.JApplicationType> {
         if (!this.application) {
             this.application = await this._initialize_application();
         }
         return this.application;
     }
 
-    public async getSymbolTable(): Promise<Record<string, JCompilationUnitType>> {
+    public async getSymbolTable(): Promise<Record<string, types.JCompilationUnitType>> {
         return (await this.getApplication()).symbol_table;
     }
+
+    public async getCallGraph(): Promise<JCallGraph> {
+        const application = await this.getApplication();
+        if (application.call_graph === undefined || application.call_graph === null) {
+            log.debug("Re-initializing application with call graph");
+            this.analysisLevel = AnalysisLevel.CALL_GRAPH;
+            this.application = await this._initialize_application();
+        }
+
+    }
+
 }
 

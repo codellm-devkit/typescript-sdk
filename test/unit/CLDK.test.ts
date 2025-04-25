@@ -5,7 +5,7 @@ import { test, expect } from "bun:test";
  * These first set of tests are to test the CLDK class
  */
 test("CLDK initialization with Java language", () => {
-    expect(CLDK.for("java").language).toBe("java");
+    expect(CLDK.for("java").getLanguage()).toBe("java");
 });
 
 test("CLDK must throw and error when the language is not Java", () => {
@@ -19,7 +19,6 @@ test("CLDK must throw and error when the language is not Java", () => {
 test("CLDK Analysis level must be set to 1 for symbol table", () => {
     const analysis = CLDK.for("java").analysis({
         projectPath: "fake/path",
-        sourceCode: null,
         analysisLevel: "Symbol Table",
     });
     expect(analysis.analysisLevel).toBe("1");
@@ -28,7 +27,6 @@ test("CLDK Analysis level must be set to 1 for symbol table", () => {
 test("CLDK Analysis level must be set to 2 for call graph", () => {
     const analysis = CLDK.for("java").analysis({
         projectPath: "fake/path",
-        sourceCode: null,
         analysisLevel: "Call Graph",
     });
     expect(analysis.analysisLevel).toBe("2");
@@ -37,7 +35,6 @@ test("CLDK Analysis level must be set to 2 for call graph", () => {
 test("CLDK Analysis level must be set to 3 for system dependency graph", () => {
     const analysis = CLDK.for("java").analysis({
         projectPath: "fake/path",
-        sourceCode: null,
         analysisLevel: "system dependency graph",
     });
     expect(analysis.analysisLevel).toBe("3");
@@ -49,7 +46,6 @@ test("CLDK Analysis level must be set to 3 for system dependency graph", () => {
 test("CLDK must get the correct codeanalyzer execution command", () => {
    const analysis = CLDK.for("java").analysis({
         projectPath: "fake/path",
-        sourceCode: null,
         analysisLevel: "Symbol Table",
     });
 

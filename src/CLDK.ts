@@ -19,10 +19,16 @@ export class CLDK {
     }
 
     /**
+     * Get the programming language of the CLDK instance
+     */
+    public getLanguage(): string {
+        return this.language;
+    }
+
+    /**
      * Implementation of the analysis method
      */
-    Implementation
-    public analysis({ projectPath, analysisLevel}): JavaAnalysis {
+    public analysis({ projectPath, analysisLevel }: { projectPath: string, analysisLevel: string }): JavaAnalysis {
         if (this.language === "java") {
             this.makeSureJavaIsInstalled();
             return new JavaAnalysis({
@@ -41,7 +47,7 @@ export class CLDK {
                 throw result.error;
             }
             if (result.status !== 0) {
-                throw new Error(result.stderr || "Java is not installed.");
+                throw new Error(result.stderr || "Java is not installed. Please install Java 11+ to be able to analyze java projects.");
             }
         } catch (e: any) {
             throw new Error(e.message || String(e));
