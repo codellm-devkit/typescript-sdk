@@ -37,6 +37,7 @@ beforeAll(async () => {
     const appZipFile = path.join(javaSampleAppsDir, "sample.daytrader8-1.2.zip");
     const extractedDir = path.join(javaSampleAppsDir, "sample.daytrader8-1.2");
     await extract(appZipFile, {dir: javaSampleAppsDir});
+
     /**
      * I am just hardcoding the extracted directory name for now. The extracted directory name would follow GitHub's
      * repository zip extraction convention. The extracted directory would be named in the format {repo-name}-{tag}.
@@ -48,13 +49,13 @@ beforeAll(async () => {
     dayTraderApp = extractedDir;
 })
 
-// /**
-//  * Tear down the test environment
-//  * Remove the daytrader application directory (but keep the zip file)
-//  */
-// afterAll(async () => {
-//     if (dayTraderApp) {
-//         fs.rmSync(path.dirname(dayTraderApp), {recursive: true, force: true});
-//     }
-// })
-//
+/**
+ * Tear down the test environment
+ * Remove the daytrader application directory (but keep the zip file)
+ */
+afterAll(async () => {
+    if (dayTraderApp) {
+        fs.rmSync(path.dirname(dayTraderApp), {recursive: true, force: true});
+    }
+})
+
