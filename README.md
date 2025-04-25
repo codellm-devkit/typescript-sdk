@@ -9,25 +9,21 @@ To install the Codellm-Devkit TypeScript SDK, you can use npm or yarn. Run the f
    
 ### Using npm
 ```bash
-npm install @codellm-devkit/typescript-sdk
+npm install --save github:codellm-devkit/typescript-sdk#initial-sdk
 ```
 
 ### Using yarn
 ```bash
-yarn add @codellm-devkit/typescript-sdk
+yarn add github:codellm-devkit/typescript-sdk#initial-sdk
+```
+If you are on yarn v1
+```bash
+yarn add codellm-devkit/typescript-sdk#initial-sdk
 ```
 
 ### Using bun 
 ```bash
-bun add @codellm-devkit/typescript-sdk
+bun add github:codellm-devkit/typescript-sdk#initial-sdk
 ```
 
-### Manual Installation
-
-Add the following to package.json:
-```json
-"dependencies": {
-    "@codellm-devkit/typescript-sdk": "main"
-}
-```
 Then run `npm install`, `yarn install`, or `bun install` depending on your package manager.
