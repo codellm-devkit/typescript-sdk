@@ -1,0 +1,5 @@
+[test]
+coverage = true
+exclude = ["**/node_modules/**"]
+patterns = ["**/*Test*.ts", "**/*test*.ts"]
+timeout = 600000 # Sets timeout to 10 minutes

@@ -1,0 +1,40 @@
+{
+  "name": "cldk",
+  "version": "0.1.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "bun build ./src/index.ts --outdir ./dist",
+    "test": "bun test --preload ./test/conftest.ts --timeout=600000 --verbose",
+    "clean": "rm -rf dist coverage"
+  },
+  "files": [
+    "dist",
+    "src/analysis/java/jars/codeanalyzer-2.3.3.jar"
+  ],
+  "exports": [
+    "./dist/index.js"
+  ],
+  "devDependencies": {
+    "@types/bun": "^1.2.10",
+    "@types/extract-zip": "2.0.0",
+    "@types/node": "^22.14.1",
+    "typescript": "^5.8.3"
+  },
+  "private": true,
+  "dependencies": {
+    "@types/jsonstream": "^0.8.33",
+    "JSONStream": "^1.3.5",
+    "bun": "^1.2.10",
+    "extract-zip": "^2.0.1",
+    "fast-glob": "^3.3.3",
+    "graphology": "^0.26.0",
+    "loglevel": "^1.9.2",
+    "zod": "^3.24.3"
+  },
+  "testing": {
+    "java-test-applications-path": "./test-applications/java",
+    "c-test-applications-path": "./test-applications/c",
+    "python-test-applications-path": "./test-applications/python"
+  }
+}
