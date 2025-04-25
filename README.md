@@ -30,22 +30,22 @@ This is the TypeScript SDK for the Codellm-Devkit (CLDK). The SDK provides a uni
 
 ### 📦 Installation
 
-To install the SDK, you can use bun, npm, or yarn. Run the following command in your terminal:
+   To install the SDK, you can use bun, npm, or yarn. Run the following command in your terminal:
    
-#### Using npm
-```bash
-npm i @cldk/cldk
-```
+1. Using npm
+   ```bash
+   npm i @cldk/cldk
+   ```
 
-#### Using yarn
-```bash
-yarn add @cldk/cldk
-```
+2. Using yarn
+   ```bash
+   yarn add @cldk/cldk
+   ```
 
-#### Using bun 
-```bash
-bun add @cldk/cldk
-```
+3. Using bun 
+   ```bash
+   bun add @cldk/cldk
+   ```
 
 ### 🚀 Quickstart
 
