@@ -23,14 +23,14 @@ import * as path from 'path';
 import * as https from 'https';
 import extract from 'extract-zip';
 import {beforeAll, afterAll } from "bun:test";
-
+import { CLDK } from "../src/CLDK";
 
 /*
  * Set up sample applications for testing
  * This is a one-time setup. Daytrader 8 will be downloaded and extracted
  */
-
-export let dayTraderApp: string;
+let dayTraderApp: string;
+export let daytraderJavaAnalysis: JavaAnalysis;
 
 beforeAll(async () => {
     const javaSampleAppsDir = path.join(__dirname, "test-applications", "java");
@@ -47,6 +47,14 @@ beforeAll(async () => {
      */
     // Set the dayTraderApp variable to the extracted directory
     dayTraderApp = extractedDir;
+
+    /**
+     * Let's also create the JavaAnalysis instance here for testing purposes.
+     */
+    daytraderJavaAnalysis = CLDK.for("java").analysis({
+        projectPath: extractedDir,
+        analysisLevel: "symbol table",
+    })
 })
 
 /**

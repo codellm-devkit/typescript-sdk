@@ -145,10 +145,7 @@ export class JavaAnalysis {
     }
 
     public async getSymbolTable(): Promise<Record<string, JCompilationUnitType>> {
-        if (!this.application) {
-            this.application = await this._initialize_application();
-        }
-        return this.application.symbol_table;
+        return (await this.getApplication()).symbol_table;
     }
 }
 
