@@ -1,6 +1,6 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/cldk-dark.png">
-  <source media="(prefers-color-scheme: light)" srcset="docs/assets/cldk-light.png">
+  <source media="(prefers-color-scheme: dark)" srcset="./docs/assets/cldk-dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="./docs/assets/cldk-light.png">
   <img alt="Logo">
 </picture>
 
@@ -25,52 +25,109 @@
 
 **A framework that bridges the gap between traditional program analysis tools and Large Language Models (LLMs) specialized for code (CodeLLMs).**
 
-### 🚀 Overview
+### Overview
 This is the TypeScript SDK for the Codellm-Devkit (CLDK). The SDK provides a unified interface for integrating outputs from various analysis tools and preparing them for effective use by CodeLLMs. It allows developers to streamline the process of transforming raw code into actionable insights.
 
 ### 📦 Installation
 
-To install the Codellm-Devkit TypeScript SDK, you can use npm or yarn. Run the following command in your terminal:
+To install the SDK, you can use bun, npm, or yarn. Run the following command in your terminal:
    
 #### Using npm
 ```bash
-npm install --save github:codellm-devkit/typescript-sdk#initial-sdk
+npm i @cldk/cldk
 ```
 
 #### Using yarn
 ```bash
-yarn add github:codellm-devkit/typescript-sdk#initial-sdk
-```
-If you are on yarn v1
-```bash
-yarn add codellm-devkit/typescript-sdk#initial-sdk
+yarn add @cldk/cldk
 ```
 
 #### Using bun 
 ```bash
-bun add github:codellm-devkit/typescript-sdk#initial-sdk
+bun add @cldk/cldk
 ```
 
-Then run `npm install`, `yarn install`, or `bun install` depending on your package manager.
+### 🚀 Quickstart
 
-### ⚙️ Basic Usage
+1. Create a Temporary Directory
 
-Here’s how to use CLDK to analyze a Java project and access key analysis artifacts:
+   ```bash
+   mkdir cldk-quickstart
+   cd cldk-quickstart
+   ```
 
-```typescript
-import { CLDK } from "cldk";
+2. Initialize a Bare Project
 
-// Initialize Java analysis
-const analysis = CLDK.for("java").analysis({
-    projectPath: "/path/to/your/java/project",
-    analysisLevel: "Symbol Table",
-});
+   ```bash
+   bun init -y
+   ```
 
-// Retrieve structured application model
-const jApplication = await analysis.getApplication();
-console.log("Parsed JApplication:", jApplication);
+   This creates a minimal `package.json` instantly.
 
-// Retrieve the symbol table
-const symbolTable = await analysis.getSymbolTable();
-console.log("Symbol Table:", symbolTable);
-```
+3. Install `@cldk/cldk`
+   
+   ```bash
+   bun add @cldk/cldk
+   ```
+
+4. Create a file `test-analysis.ts` with the following content:
+
+   ```typescript
+   import { CLDK } from "cldk";
+   
+   // Initialize Java analysis
+   const analysis = CLDK.for("java").analysis({
+       projectPath: "/path/to/your/java/project",
+       analysisLevel: "Symbol Table",
+   });
+   
+   // Retrieve structured application model
+   const jApplication = await analysis.getApplication();
+   console.log("Parsed JApplication:", jApplication);
+   
+   // Retrieve the symbol table
+   const symbolTable = await analysis.getSymbolTable();
+   console.log("Symbol Table:", symbolTable);
+   ```
+
+5. Run the Script
+
+   ```bash
+   bun test-analysis.ts
+   ```
+
+### 🛠️ Development Instructions
+
+#### Developing Locally (with Bun)
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/codellm-devkit/typescript-sdk.git
+   cd typescript-sdk
+   ```
+
+2. If you don't have it already, pleaes install `Bun`:
+   ```bash
+   curl -fsSL https://bun.sh/install | bash
+   ```
+   _Note: follow any post-installation instructions to complete the installation_
+3. Install the dependencies
+   ```bash
+   bun install
+   ```
+
+4. Run tests:
+   ```bash
+   bun run test
+   ```
+
+#### Developing inside a Container (Using Dev Containers)
+
+1. If you don't, ensure you have Docker/Podman and a compatible editor (e.g., VS Code) with the Dev Containers extension installed.
+
+2. Open the repository in your editor. When prompted, reopen the project in the dev container. The devcontainer is configured to come pre-installed with bun and all the necessary dependencies.
+ 
+3. You can start by run tests:
+   ```bash
+   bun run test
+   ```
