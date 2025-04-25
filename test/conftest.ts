@@ -55,7 +55,7 @@ beforeAll(async () => {
  */
 afterAll(async () => {
     if (dayTraderApp) {
-        fs.rmSync(path.dirname(dayTraderApp), {recursive: true, force: true});
+        fs.rmSync(dayTraderApp, {recursive: true, force: true});
     }
 })
 
