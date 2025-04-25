@@ -33,12 +33,11 @@ Then run `npm install`, `yarn install`, or `bun install` depending on your packa
 Here’s how to use CLDK to analyze a Java project and access key analysis artifacts:
 
 ```typescript
-import { CLDK } from "typescript-sdk";
-import { dayTraderApp } from "./path/to/config"; // Your app path setup
+import { CLDK } from "cldk";
 
 // Initialize Java analysis
 const analysis = CLDK.for("java").analysis({
-    projectPath: dayTraderApp,
+    projectPath: "/path/to/your/java/project",
     analysisLevel: "Symbol Table",
 });
 
