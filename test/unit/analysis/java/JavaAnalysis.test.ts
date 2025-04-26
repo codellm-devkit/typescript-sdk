@@ -14,3 +14,7 @@ test("Must get Symbol Table", async () => {
     const symbolTable = await daytraderJavaAnalysis.getSymbolTable();
     expect(symbolTable).toBeDefined();
 });
+
+test("Must get all classes in a Java application", async () => {
+    expect(await daytraderJavaAnalysis.getAllClasses()).toBeDefined();
+})

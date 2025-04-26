@@ -23,6 +23,7 @@ import { JApplication } from "../../models/java";
 import * as types from "../../models/java/types";
 import os from "os";
 import JSONStream from "JSONStream";
+declare module "JSONStream";
 import crypto from "crypto";
 
 enum AnalysisLevel {
@@ -147,15 +148,19 @@ export class JavaAnalysis {
         return (await this.getApplication()).symbol_table;
     }
 
-    public async getCallGraph(): Promise<JCallGraph> {
-        const application = await this.getApplication();
-        if (application.call_graph === undefined || application.call_graph === null) {
-            log.debug("Re-initializing application with call graph");
-            this.analysisLevel = AnalysisLevel.CALL_GRAPH;
-            this.application = await this._initialize_application();
-        }
-
+    /**
+     *
+     */
+    public async getAllClasses(): Promise<Record<string, types.JTypeType>> {
+        return Object.values((await this.getSymbolTable())).reduce((classAccumulator, symbol) => {
+            Object.entries(symbol.type_declarations).forEach(([key, value]) => {
+                classAccumulator[key] = value;
+            });
+            return classAccumulator;
+        }, {} as Record<string, types.JTypeType>);
     }
+
+    public async getAllMethods(): Promise<Array>
 
 }
 
