@@ -43,6 +43,9 @@ jobs:
         continue-on-error: false
         run: bun run test
 
+      - name: Upload coverage to Coveralls
+        uses: coverallsapp/github-action@v2
+
       - name: Generate Changelog
         id: gen_changelog
         uses: mikepenz/release-changelog-builder-action@v5

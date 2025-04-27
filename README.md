@@ -5,44 +5,43 @@
 </picture>
 
 <p align='center'>
-  <a href="https://arxiv.org/abs/2410.13007">
-    <img src="https://img.shields.io/badge/arXiv-2410.13007-b31b1b?style=for-the-badge" />
-  </a>
-  <a href="https://opensource.org/licenses/Apache-2.0">
-    <img src="https://img.shields.io/badge/License-Apache%202.0-green?style=for-the-badge" />
-  </a>
-  <a href="https://codellm-devkit.info">
-    <img src="https://img.shields.io/badge/GitHub%20Pages-Docs-blue?style=for-the-badge" />
-  </a>
-  <a href="https://www.npmjs.com/package/@codellm-devkit/cldk">
-    <img src="https://img.shields.io/npm/v/@codellm-devkit/cldk?color=crimson&logo=npm&style=for-the-badge" />
-  </a>
-  <a href="https://discord.com/channels/1333486179667935403/1334150434348208208">
-    <img src="https://dcbadge.limes.pink/api/server/https://discord.gg/zEjz9YrmqN?style=for-the-badge"/>
-  </a>
+   <a href="https://codellm-devkit.info">
+    <img src="https://img.shields.io/badge/GitHub%20Pages-Docs-blue?" />
+   </a>
+   <a href="https://www.npmjs.com/package/@codellm-devkit/cldk">
+    <img src="https://img.shields.io/npm/v/@codellm-devkit/cldk?color=crimson&logo=npm&" />
+   </a>
+   <a href="https://coveralls.io/github/codellm-devkit/typescript-sdk?branch=main">
+    <img src="https://img.shields.io/coveralls/github/codellm-devkit/typescript-sdk/main?"/>
+   </a>
+   <a href="https://opensource.org/licenses/Apache-2.0">
+    <img src="https://img.shields.io/badge/License-Apache%202.0-green?" />
+   </a>
 </p>
-
 
 **A framework that bridges the gap between traditional program analysis tools and Large Language Models (LLMs) specialized for code (CodeLLMs).**
 
 ### Overview
+
 This is the TypeScript SDK for the Codellm-Devkit (CLDK). The SDK provides a unified interface for integrating outputs from various analysis tools and preparing them for effective use by CodeLLMs. It allows developers to streamline the process of transforming raw code into actionable insights.
 
 ### 📦 Installation
 
-   To install the SDK, you can use bun, npm, or yarn. Run the following command in your terminal:
-   
+To install the SDK, you can use bun, npm, or yarn. Run the following command in your terminal:
+
 1. Using npm
+
    ```bash
    npm i @codellm-devkit/cldk
    ```
 
 2. Using yarn
+
    ```bash
    yarn add @codellm-devkit/cldk
    ```
 
-3. Using bun 
+3. Using bun
    ```bash
    bun add @codellm-devkit/cldk
    ```
@@ -65,7 +64,7 @@ This is the TypeScript SDK for the Codellm-Devkit (CLDK). The SDK provides a uni
    This creates a minimal `package.json` instantly.
 
 3. Install `@codellm-devkit/cldk`
-   
+
    ```bash
    bun add @codellm-devkit/cldk
    ```
@@ -74,17 +73,17 @@ This is the TypeScript SDK for the Codellm-Devkit (CLDK). The SDK provides a uni
 
    ```typescript
    import { CLDK } from "cldk";
-   
+
    // Initialize Java analysis
    const analysis = CLDK.for("java").analysis({
-       projectPath: "/path/to/your/java/project",
-       analysisLevel: "Symbol Table",
+     projectPath: "/path/to/your/java/project",
+     analysisLevel: "Symbol Table",
    });
-   
+
    // Retrieve structured application model
    const jApplication = await analysis.getApplication();
    console.log("Parsed JApplication:", jApplication);
-   
+
    // Retrieve the symbol table
    const symbolTable = await analysis.getSymbolTable();
    console.log("Symbol Table:", symbolTable);
@@ -101,6 +100,7 @@ This is the TypeScript SDK for the Codellm-Devkit (CLDK). The SDK provides a uni
 #### Developing Locally (with Bun)
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/codellm-devkit/typescript-sdk.git
    cd typescript-sdk
@@ -112,6 +112,7 @@ This is the TypeScript SDK for the Codellm-Devkit (CLDK). The SDK provides a uni
    ```
    _Note: follow any post-installation instructions to complete the installation_
 3. Install the dependencies
+
    ```bash
    bun install
    ```
@@ -126,7 +127,7 @@ This is the TypeScript SDK for the Codellm-Devkit (CLDK). The SDK provides a uni
 1. If you don't, ensure you have Docker/Podman and a compatible editor (e.g., VS Code) with the Dev Containers extension installed.
 
 2. Open the repository in your editor. When prompted, reopen the project in the dev container. The devcontainer is configured to come pre-installed with bun and all the necessary dependencies.
- 
+
 3. You can start by run tests:
    ```bash
    bun run test
