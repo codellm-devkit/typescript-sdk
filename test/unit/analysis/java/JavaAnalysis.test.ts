@@ -1,4 +1,4 @@
-import { JType } from "../../../../src/models/java/";
+import { JCallable, JType } from "../../../../src/models/java/";
 import { daytraderJavaAnalysis } from "../../../conftest";
 import { expect, test } from "bun:test";
 
@@ -46,4 +46,11 @@ test("Must get all methods in a specific class in the application", async () => 
     (
       await daytraderJavaAnalysis.getAllMethodsByClass("com.ibm.websphere.samples.daytrader.impl.direct.TradeDirect")).length
   ).toBeGreaterThan(0)
+});
+
+test("Must get a specific method in a specific class in the application", async () => {
+  const method = await daytraderJavaAnalysis.getMethodByQualifiedName(
+    "com.ibm.websphere.samples.daytrader.impl.direct.TradeDirect", "publishQuotePriceChange(QuoteDataBean, BigDecimal, BigDecimal, double)");
+
+  expect(async () => JCallable.parse(method)).not.toThrow();
 });

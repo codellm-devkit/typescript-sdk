@@ -19,7 +19,7 @@ import fg from "fast-glob";
 import fs from "fs";
 import log from "loglevel";
 import { spawnSync } from "node:child_process";
-import { JApplication } from "../../models/java";
+import { JApplication, JCompilationUnit } from "../../models/java";
 import * as types from "../../models/java/types";
 import { JType } from "../../models/java";
 import os from "os";
@@ -152,6 +152,15 @@ export class JavaAnalysis {
     return this.application;
   }
 
+  /**
+   * Get the symbol table from the application.
+   * @returns {Promise<Record<string, types.JCompilationUnitType>>} A promise that resolves to a record of file paths and their
+   * corresponding {@link JCompilationUnitType} objects
+   * 
+   * @notes This method retrieves the symbol table from the application, which contains information about all
+   * compilation units in the Java application. The returned record contains file paths as keys and their
+   * corresponding {@link JCompilationUnit} objects as values.
+   */
   public async getSymbolTable(): Promise<Record<string, types.JCompilationUnitType>> {
     return (await this.getApplication()).symbol_table;
   }
@@ -221,5 +230,22 @@ export class JavaAnalysis {
   public async getAllMethodsByClass(qualifiedName: string): Promise<Array<types.JCallableType>> {
     const classForWhichMethodsAreRequested = await this.getClassByQualifiedName(qualifiedName);
     return classForWhichMethodsAreRequested ? Object.values(classForWhichMethodsAreRequested.callable_declarations ?? {}) : [];
+  }
+
+  /**
+   * Get a specific methods within a specific class by its qualified name.
+   * @param {string} qualifiedName - The qualified name of the class to retrieve
+   * @param {string} methodName - The name of the method to retrieve
+   * @returns {Promise<types.JCallableType>} A promise that resolves to the {@link JCallable} object representing the method.
+   * @throws {Error} If the class or method is not found in the application.
+   * 
+   * @notes This method retrieves a specific method from the application by its qualified name and method name.
+   * If the method is found, it returns the corresponding {@link JCallableType} object. If the method is not found,
+   * it throws an error.
+   */
+  public async getMethodByQualifiedName(qualifiedName: string, methodName: string): Promise<types.JCallableType> {
+    return (await this.getAllMethodsByClass(qualifiedName)).find(
+      (method) => method.signature === methodName
+    ) ?? (() => { throw new Error(`Method ${methodName} not found in class ${qualifiedName}.`); })();
   }
 }
