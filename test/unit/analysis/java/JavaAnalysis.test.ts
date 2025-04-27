@@ -22,7 +22,7 @@ test("Must get all classes in a Java application", async () => {
 
 test("Must get a specific class the application", async () => {
   const tradeDirectObject = await daytraderJavaAnalysis.getClassByQualifiedName("com.ibm.websphere.samples.daytrader.impl.direct.TradeDirect");
-  expect(async () => JType.parse(tradeDirectObject)).not.toThrow(); 
+  expect(async () => JType.parse(tradeDirectObject)).not.toThrow();
 });
 
 test("Must throw error when a requested class in the application does not exist", async () => {
@@ -32,7 +32,7 @@ test("Must throw error when a requested class in the application does not exist"
    * by saying "Hey, I expect this promise to be rejected with this error ..." 
    */
   await expect(daytraderJavaAnalysis.getClassByQualifiedName("this.class.does.not.Exist")).rejects.toThrow(
-    "Class this.class.does.not.Exist not found in the application."); 
+    "Class this.class.does.not.Exist not found in the application.");
 });
 
 test("Must get all methods in the application", () => {
@@ -41,3 +41,9 @@ test("Must get all methods in the application", () => {
   });
 });
 
+test("Must get all methods in a specific class in the application", async () => {
+  expect(
+    (
+      await daytraderJavaAnalysis.getAllMethodsByClass("com.ibm.websphere.samples.daytrader.impl.direct.TradeDirect")).length
+  ).toBeGreaterThan(0)
+});

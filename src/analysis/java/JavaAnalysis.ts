@@ -80,9 +80,9 @@ export class JavaAnalysis {
       const tmpFilePath = path.join(os.tmpdir(), `${Date.now()}-${crypto.randomUUID()}`);
       const command = [
         ...this.getCodeAnalyzerExec(),
-        "-i",
+        "--input",
         projectPath,
-        "-o",
+        "--output",
         tmpFilePath,
         `--analysis-level=${this.analysisLevel}`,
         "--verbose",
@@ -174,7 +174,42 @@ export class JavaAnalysis {
   }
 
   /**
-   * Get all methods in the application.
+   * Get a specific class by its qualified name.
+   * @param {string} qualifiedName - The qualified name of the class to retrieve
+   * @returns {Promise<types.JTypeType>} A promise that resolves to the {@link JTypeType} object representing the class
+   * @throws {Error} If the class is not found in the application
+   * 
+   * @notes This method retrieves a specific class from the application by its qualified name. If the class is found,
+   *       it returns the corresponding {@link JType} object. If the class is not found, it throws an error.
+   */
+  public async getClassByQualifiedName(qualifiedName: string): Promise<types.JTypeType> {
+    const allClasses = await this.getAllClasses();
+    if (allClasses[qualifiedName]) {
+      return allClasses[qualifiedName];
+    }
+    else
+      throw new Error(`Class ${qualifiedName} not found in the application.`);
+  }
+
+  /**
+  * Get all methods in the application.
+  * @returns {Promise<Record<string, Record<string, types.JCallableType>>>} A promise that resolves to a record of
+  * method names and their corresponding {@link JCallableType} objects
+  * 
+  * @notes This method retrieves all methods from the symbol table and returns them as a record. The returned
+  *       record contains class names as keys and their corresponding {@link JCallableType} objects as values.
+  *       Each {@link JCallableType} object contains information about the method's parameters, return type, and
+  *       other relevant details.
+  */
+  public async getAllMethods(): Promise<Record<string, Record<string, types.JCallableType>>> {
+    return Object.entries(await this.getAllClasses()).reduce((allMethods, [key, value]) => {
+      allMethods[key] = value.callable_declarations;
+      return allMethods;
+    }, {} as Record<string, Record<string, types.JCallableType>>);
+  }
+
+  /**
+   * Get all methods in a specific class in the application.
    * @returns {Promise<Record<string, Record<string, types.JCallableType>>>} A promise that resolves to a record of
    * method names and their corresponding {@link JCallableType} objects
    * 
@@ -183,19 +218,8 @@ export class JavaAnalysis {
    *       Each {@link JCallableType} object contains information about the method's parameters, return type, and
    *       other relevant details.
    */
-  public async getAllMethods(): Promise<Record<string, Record<string, types.JCallableType>>> {
-    return Object.entries(await this.getAllClasses()).reduce((allMethods, [key, value]) => {
-      allMethods[key] = value.callable_declarations;
-      return allMethods;
-    }, {} as Record<string, Record<string, types.JCallableType>>);
-  }
-
-  public async getClassByQualifiedName(qualifiedName: string): Promise<types.JTypeType> {
-    const allClasses = await this.getAllClasses();
-    if (allClasses[qualifiedName]) {
-      return allClasses[qualifiedName];
-    }
-    else
-      throw new Error(`Class ${qualifiedName} not found in the application.`);
+  public async getAllMethodsByClass(qualifiedName: string): Promise<Array<types.JCallableType>> {
+    const classForWhichMethodsAreRequested = await this.getClassByQualifiedName(qualifiedName);
+    return classForWhichMethodsAreRequested ? Object.values(classForWhichMethodsAreRequested.callable_declarations ?? {}) : [];
   }
 }
