@@ -1,4 +1,4 @@
-import { JCallable, JType } from "../../../../src/models/java/";
+import { JCallable, JCallableParameter, JType } from "../../../../src/models/java/";
 import { daytraderJavaAnalysis } from "../../../conftest";
 import { expect, test } from "bun:test";
 
@@ -53,4 +53,15 @@ test("Must get a specific method in a specific class in the application", async 
     "com.ibm.websphere.samples.daytrader.impl.direct.TradeDirect", "publishQuotePriceChange(QuoteDataBean, BigDecimal, BigDecimal, double)");
 
   expect(async () => JCallable.parse(method)).not.toThrow();
+});
+
+test("Must get parameters of a specific method in a specific class in the application", async () => {
+  const parameters = await daytraderJavaAnalysis.getMethodParameters(
+    "com.ibm.websphere.samples.daytrader.impl.direct.TradeDirect", "publishQuotePriceChange(QuoteDataBean, BigDecimal, BigDecimal, double)");
+
+  expect(parameters).toBeDefined();
+  expect(parameters.length).toBeGreaterThan(0);
+  parameters.forEach(param => {
+    expect(async () => JCallableParameter.parse(param)).not.toThrow();
+  });
 });

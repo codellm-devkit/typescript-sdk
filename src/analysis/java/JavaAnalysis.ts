@@ -248,4 +248,18 @@ export class JavaAnalysis {
       (method) => method.signature === methodName
     ) ?? (() => { throw new Error(`Method ${methodName} not found in class ${qualifiedName}.`); })();
   }
+
+  /**
+   * Get all the method parameters in a specific method within a specific class by its qualified name.
+   * @param {string} qualifiedName - The qualified name of the class to retrieve
+   * @param {string} methodName - The name of the method to retrieve
+   * @returns {Promise<Array<types.JCallableParameterType>>} A promise that resolves to an array of {@link JCallableParameterType} objects
+   * @throws {Error} If the class or method is not found in the application.
+   * 
+   * @notes This method retrieves all the parameters of a specific method from the application by its qualified name
+   * and method name. If the method is found, it returns an array of {@link JCallableParameter} objects representing
+   */
+  public async getMethodParameters(qualifiedName: string, methodName: string): Promise<Array<types.JCallableParameterType>> {
+    return (await this.getMethodByQualifiedName(qualifiedName, methodName)).parameters ?? [];
+  }
 }
