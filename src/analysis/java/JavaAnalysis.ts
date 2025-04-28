@@ -17,7 +17,6 @@
 import path from "path";
 import fg from "fast-glob";
 import fs from "fs";
-import log from "loglevel";
 import { spawnSync } from "node:child_process";
 import { JApplication, JCompilationUnit } from "../../models/java";
 import * as types from "../../models/java/types";
