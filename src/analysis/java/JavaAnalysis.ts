@@ -26,6 +26,9 @@ import os from "os";
 import JSONStream from "JSONStream";
 declare module "JSONStream";
 import crypto from "crypto";
+import { createLogger } from "src/utils";
+
+const logger = createLogger("JavaAnalysis");
 
 enum AnalysisLevel {
   SYMBOL_TABLE = "1",
@@ -56,10 +59,10 @@ export class JavaAnalysis {
     const jarPath = matches[0];
 
     if (!jarPath) {
-      console.log("Default codeanalyzer jar not found.");
+      logger.error("Default codeanalyzer jar not found.");
       throw new Error("Default codeanalyzer jar not found.");
     }
-    log.info("Codeanalyzer jar found at:", jarPath);
+    logger.info("Codeanalyzer jar found at:", jarPath);
     return ["java", "-jar", jarPath];
   }
 
@@ -91,7 +94,7 @@ export class JavaAnalysis {
       if (!command[0]) {
         return reject(new Error("Codeanalyzer command not found"));
       }
-      log.debug(command.join(" "));
+      logger.debug(command.join(" "));
       const result = spawnSync(command[0], command.slice(1), {
         stdio: ["ignore", "pipe", "inherit"],
       });
@@ -115,8 +118,9 @@ export class JavaAnalysis {
 
         stream.on("end", () => {
           // Clean up the temporary file
+          logger.debug(`Deleting temporary file: ${tmpFilePath}`);
           fs.rm(tmpFilePath, { recursive: true, force: true }, (err) => {
-            if (err) log.warn(`Failed to delete temporary file: ${tmpFilePath}`, err);
+            if (err) logger.warn(`Failed to delete temporary file: ${tmpFilePath}`, err);
           });
           resolve(result as types.JApplicationType);
         });

@@ -23,6 +23,7 @@ import * as path from 'path';
 import extract from 'extract-zip';
 import { beforeAll, afterAll } from "bun:test";
 import { CLDK } from "../src/CLDK";
+import { JavaAnalysis } from "../src/analysis/java/JavaAnalysis";
 
 /*
  * Set up sample applications for testing
