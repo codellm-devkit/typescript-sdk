@@ -262,4 +262,36 @@ export class JavaAnalysis {
   public async getMethodParameters(qualifiedName: string, methodName: string): Promise<Array<types.JCallableParameterType>> {
     return (await this.getMethodByQualifiedName(qualifiedName, methodName)).parameters ?? [];
   }
+
+  /**
+   * Get all the method parameters in a specific method within a specific class by its callable object.
+   * @param {types.JCallableType} callable - The callable object representing the method to retrieve
+   * @returns {Promise<Array<types.JCallableParameterType>>} A promise that resolves to an array of {@link JCallableParameterType} objects
+   * 
+   * @notes This method retrieves all the parameters of a specific method from the application by its callable object.
+   * If the method is found, it returns an array of {@link JCallableParameter} objects representing
+   * the parameters of the method. Otherwise, it returns an empty array.
+   */
+  public async getMethodParametersFromCallable(callable: types.JCallableType): Promise<Array<types.JCallableParameterType>> {
+    return callable.parameters ?? [];
+  }
+
+  /**
+   * Get the java file path given the qualified name of the class.
+   * @param {string} qualifiedName - The qualified name of the class to retrieve
+   * @returns {Promise<string>} A promise that resolves to the file path of the Java file containing the class
+   * @throws {Error} If the class is not found in the application.
+   * 
+   * @notes This method retrieves the file path of the Java file containing the class with the specified qualified name.
+   * If the class is found, it returns the file path as a string. If the class is not found, it throws an error.
+   */
+  public async getJavaFilePathByQualifiedName(qualifiedName: string): Promise<string> {
+    const symbolTable = await this.getSymbolTable();
+    for (const [filePath, compilationUnit] of Object.entries(symbolTable)) {
+      if (Object.keys(compilationUnit.type_declarations).includes(qualifiedName)) {
+        return filePath;
+      }
+    }
+    throw new Error(`Class ${qualifiedName} not found in the application.`);
+  }
 }

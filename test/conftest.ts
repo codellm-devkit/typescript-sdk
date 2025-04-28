@@ -20,9 +20,8 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import * as https from 'https';
 import extract from 'extract-zip';
-import {beforeAll, afterAll } from "bun:test";
+import { beforeAll, afterAll } from "bun:test";
 import { CLDK } from "../src/CLDK";
 
 /*
@@ -36,7 +35,7 @@ beforeAll(async () => {
     const javaSampleAppsDir = path.join(__dirname, "test-applications", "java");
     const appZipFile = path.join(javaSampleAppsDir, "sample.daytrader8-1.2.zip");
     const extractedDir = path.join(javaSampleAppsDir, "sample.daytrader8-1.2");
-    await extract(appZipFile, {dir: javaSampleAppsDir});
+    await extract(appZipFile, { dir: javaSampleAppsDir });
 
     /**
      * I am just hardcoding the extracted directory name for now. The extracted directory name would follow GitHub's
@@ -63,7 +62,7 @@ beforeAll(async () => {
  */
 afterAll(async () => {
     if (dayTraderApp) {
-        fs.rmSync(dayTraderApp, {recursive: true, force: true});
+        fs.rmSync(dayTraderApp, { recursive: true, force: true });
     }
 })
 

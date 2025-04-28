@@ -1,6 +1,10 @@
 import { JCallable, JCallableParameter, JType } from "../../../../src/models/java/";
 import { daytraderJavaAnalysis } from "../../../conftest";
 import { expect, test } from "bun:test";
+import chalk from "chalk";
+import { Signale } from "signale";
+
+const logger = new Signale();
 
 test("Must get analysis object from JavaAnalysis object", () => {
   expect(daytraderJavaAnalysis).toBeDefined();
@@ -60,8 +64,27 @@ test("Must get parameters of a specific method in a specific class in the applic
     "com.ibm.websphere.samples.daytrader.impl.direct.TradeDirect", "publishQuotePriceChange(QuoteDataBean, BigDecimal, BigDecimal, double)");
 
   expect(parameters).toBeDefined();
-  expect(parameters.length).toBeGreaterThan(0);
+  logger.success(chalk.green("parameters are defined"));
+  expect(parameters.length).toBe(4);
+  logger.success(chalk.green("there are 4 parameters"));
   parameters.forEach(param => {
     expect(async () => JCallableParameter.parse(param)).not.toThrow();
   });
+  logger.success(chalk.green("All parameters are valid JCallableParameter instances"));
 });
+
+test("Must get parameters of a specific method in a specific class in the application given the callable object", async () => {
+  const method = await daytraderJavaAnalysis.getMethodByQualifiedName(
+    "com.ibm.websphere.samples.daytrader.impl.direct.TradeDirect", "publishQuotePriceChange(QuoteDataBean, BigDecimal, BigDecimal, double)");
+  const parameters = await daytraderJavaAnalysis.getMethodParametersFromCallable(method);
+  expect(parameters).toBeDefined();
+  logger.success(chalk.green("parameters are defined"));
+  expect(parameters.length).toBe(4);
+  logger.success(chalk.green("there are 4 parameters"));
+  parameters.forEach(param => {
+    expect(async () => JCallableParameter.parse(param)).not.toThrow();
+  }
+  );
+  logger.success(chalk.green("All parameters are valid JCallableParameter instances"));
+});
+
