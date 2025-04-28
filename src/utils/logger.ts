@@ -1,5 +1,5 @@
 // logger.ts
-import Signale from 'signale';
+import { Signale } from 'signale';
 import chalk from 'chalk';
 
 class Logger {
@@ -7,10 +7,6 @@ class Logger {
      * Instance of Signale for logging messages.
      */
 
-    /** 
-     * @note Instead of using `private signale: Signale;`, I am using `InstanceType<typeof Signale>` to tell
-     * typescript, "Hey, signale is an instance of the {@link Signale} class."
-     */
     private signale: InstanceType<typeof Signale>;
 
     constructor(scope?: string) {
