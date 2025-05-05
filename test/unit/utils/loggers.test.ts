@@ -1,35 +1,35 @@
 import { test, expect } from 'bun:test';
 import { logger, createLogger } from '../../../src/utils/logger';
 
-test("Must create a logger instance", () => {
+test("Should create a logger instance", () => {
     expect(logger).toBeDefined();
 });
 
-test("Must log info message without throwing", () => {
+test("Should log info message without throwing", () => {
     expect(() => logger.info("This is an info message")).not.toThrow();
 });
 
-test("Must log success message without throwing", () => {
+test("Should log success message without throwing", () => {
     expect(() => logger.success("This is a success message")).not.toThrow();
 });
 
-test("Must log warning message without throwing", () => {
+test("Should log warning message without throwing", () => {
     expect(() => logger.warn("This is a warning message")).not.toThrow();
 });
 
-test("Must log error message without throwing", () => {
+test("Should log error message without throwing", () => {
     expect(() => logger.error("This is an error message")).not.toThrow();
 });
 
-test("Must log debug message without throwing", () => {
+test("Should log debug message without throwing", () => {
     expect(() => logger.debug("This is a debug message")).not.toThrow();
 });
 
-test("Must pretty print JSON without throwing", () => {
+test("Should pretty print JSON without throwing", () => {
     expect(() => logger.prettyJson("Test Object", { foo: "bar", baz: 42 })).not.toThrow();
 });
 
-test("Must create scoped logger instance", () => {
+test("Should create scoped logger instance", () => {
     const scopedLogger = createLogger("TestScope");
     expect(scopedLogger).toBeDefined();
 });

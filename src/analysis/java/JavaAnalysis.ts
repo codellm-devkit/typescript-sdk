@@ -22,8 +22,6 @@ import { JApplication, JCompilationUnit } from "../../models/java";
 import * as types from "../../models/java/types";
 import { JType } from "../../models/java";
 import os from "os";
-import JSONStream from "JSONStream";
-declare module "JSONStream";
 import crypto from "crypto";
 import { createLogger } from "src/utils";
 
@@ -108,6 +106,7 @@ export class JavaAnalysis {
 
       // Read the analysis result from the temporary file
       try {
+        const JSONStream = require("JSONStream");
         const stream = fs.createReadStream(path.join(tmpFilePath, "analysis.json")).pipe(JSONStream.parse());
         const result = {} as types.JApplicationType;
 
@@ -297,4 +296,6 @@ export class JavaAnalysis {
     }
     throw new Error(`Class ${qualifiedName} not found in the application.`);
   }
+
+
 }
