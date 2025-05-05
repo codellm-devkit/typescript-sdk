@@ -28,8 +28,14 @@
     "noPropertyAccessFromIndexSignature": false,
     "baseUrl": ".",
     "paths": {
-      "cldk": ["node_modules/@cldk/cldk"]
-    }
+      "cldk": [
+        "node_modules/@cldk/cldk"
+      ]
+    },
+    "typeRoots": [
+      "./src/ypes",
+      "./node_modules/@types"
+    ]
   },
   "include": [
     "src"

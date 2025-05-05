@@ -13,7 +13,8 @@
   "homepage": "https://github.com/codellm-devkit/typescript-sdk#readme",
   "scripts": {
     "build": "bun build ./src/index.ts --outdir ./dist",
-    "test": "bun test --preload ./test/conftest.ts --timeout=600000 --verbose",
+    "test": "bun test --verbose --coverage --preload ./test/conftest.ts --timeout=600000",
+    "test:withCoverage": "bun test --verbose --coverage --coverage-reporter=lcov --preload ./test/conftest.ts --timeout=600000",
     "clean": "rm -rf dist coverage *.lock"
   },
   "files": [
@@ -36,10 +37,13 @@
     "@types/jsonstream": "^0.8.33",
     "JSONStream": "^1.3.5",
     "bun": "^1.2.10",
+    "c8": "^10.1.3",
+    "chalk": "^5.4.1",
     "extract-zip": "^2.0.1",
     "fast-glob": "^3.3.3",
     "graphology": "^0.26.0",
     "loglevel": "^1.9.2",
+    "signale": "^1.4.0",
     "zod": "^3.24.3"
   },
   "testing": {

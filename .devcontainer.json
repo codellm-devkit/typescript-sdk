@@ -1,14 +1,12 @@
 {
-  "name": "CLDK TypeScript SDK (Bun)",
-  "image": "oven/bun:latest",
+  "name": "CLDK TypeScript SDK (Node+Bun+Java)",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20-bookworm",
   "features": {
-    "ghcr.io/devcontainers/features/node:1": {
-      "version": "20"
-    },
     "ghcr.io/devcontainers/features/java:1": {
       "version": "11"
     }
   },
+  "postCreateCommand": "curl -fsSL https://bun.sh/install | bash && export BUN_INSTALL=$HOME/.bun && export PATH=$BUN_INSTALL/bin:$PATH && bun install",
   "customizations": {
     "vscode": {
       "extensions": [
@@ -23,9 +21,5 @@
       }
     }
   },
-  "postCreateCommand": "bun install",
-  "workspaceFolder": "/workspace",
-  "mounts": [
-    "source=${localWorkspaceFolder},target=/workspace,type=bind"
-  ]
+  "workspaceFolder": "/workspaces/typescript-sdk"
 }
